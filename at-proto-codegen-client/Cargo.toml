@@ -1,0 +1,21 @@
+[package]
+name = "at-proto-codegen-client"
+description = "Generate an XRPC client from a lexicon"
+version = "0.1.0"
+edition = "2021"
+authors = ["Zelda Hessler <zelda.hessler@pm.me>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.66"
+clap = { version = "4", features = ["derive"] }
+convert_case = "0.6.0"
+mime = "0.3.16"
+rust-code-writer = { version = "*", path = "../rust-code-writer" }
+serde = { version = "1.0.147", features = ["derive"] }
+serde_json = "1.0.87"
+thiserror = "1.0.37"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"
+xrpc = { version = "*", path = "../xrpc" }

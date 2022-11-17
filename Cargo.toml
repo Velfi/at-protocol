@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+  "at-proto-codegen-client",
+  "did-placeholder",
+  "rust-code-writer",
+  "xrpc",
+]

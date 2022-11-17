@@ -1,0 +1,12 @@
+[package]
+name = "rust-code-writer"
+description = "Code for generating and writing Rust code to files."
+version = "0.1.0"
+edition = "2021"
+authors = ["Zelda Hessler <zelda.hessler@pm.me>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+thiserror = "1.0.37"
+tracing = "0.1.37"

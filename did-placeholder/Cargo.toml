@@ -1,0 +1,10 @@
+[package]
+name = "did-placeholder"
+description = "A Rust implementation of https://atproto.com/specs/did-plc"
+version = "0.1.0"
+edition = "2021"
+authors = ["Zelda Hessler <zelda.hessler@pm.me>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

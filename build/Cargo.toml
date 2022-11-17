@@ -1,0 +1,13 @@
+[package]
+name = "xrpc-com-atproto"
+version = "0.1.0"
+edition = "2021"
+description = "Generated XRPC client"
+authors = [
+    "Zelda Hessler <zelda.hessler@pm.me>",
+]
+
+
+
+
+
