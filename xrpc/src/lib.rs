@@ -1,4 +1,6 @@
 pub mod parameter;
+pub mod request;
+pub mod response;
 
 pub use parameter::Parameter;
 

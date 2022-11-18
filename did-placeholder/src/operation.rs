@@ -1,9 +1,8 @@
-use std::hash::Hash;
 
 use crate::cid::Cid;
 use crate::did_key::DidKey;
-
 // TODO I want Operations to be `Hash` but that trait isn't object safe
+// use std::hash::Hash;
 
 pub trait Operation {
     /// operation type
@@ -15,53 +14,53 @@ pub trait Operation {
 }
 
 pub struct OperationLog {
-    log: Vec<Box<dyn Operation>>,
+    pub log: Vec<Box<dyn Operation>>,
 }
 
-const OP_CREATE: &str = "create";
+pub const OP_CREATE: &str = "create";
 
 pub struct Create {
-    r#type: &'static str,
-    signing_key: String,
-    recovery_key: String,
-    username: String,
-    service: String,
-    prev: Option<Cid>,
-    sig: String,
+    pub r#type: &'static str,
+    pub signing_key: String,
+    pub recovery_key: String,
+    pub username: String,
+    pub service: String,
+    pub prev: Option<Cid>,
+    pub sig: String,
 }
 
 pub const OP_UPDATE_USERNAME: &str = "update_username";
 
-struct UpdateUsername {
-    r#type: &'static str,
-    username: String,
-    prev: Option<Cid>,
-    sig: String,
+pub struct UpdateUsername {
+    pub r#type: &'static str,
+    pub username: String,
+    pub prev: Option<Cid>,
+    pub sig: String,
 }
 
 pub const OP_UPDATE_ATP_PDS: &str = "update_atp_pds";
 
-struct UpdateAtpPds {
-    r#type: &'static str,
-    service: String,
-    prev: Option<Cid>,
-    sig: String,
+pub struct UpdateAtpPds {
+    pub r#type: &'static str,
+    pub service: String,
+    pub prev: Option<Cid>,
+    pub sig: String,
 }
 
 pub const OP_ROTATE_SIGNING_KEY: &str = "rotate_signing_key";
 
-struct RotateSigningKey {
-    r#type: &'static str,
-    key: DidKey,
-    prev: Option<Cid>,
-    sig: String,
+pub struct RotateSigningKey {
+    pub r#type: &'static str,
+    pub key: DidKey,
+    pub prev: Option<Cid>,
+    pub sig: String,
 }
 
 pub const OP_ROTATE_RECOVERY_KEY: &str = "rotate_recovery_key";
 
-struct RotateRecoveryKey {
-    r#type: &'static str,
-    key: DidKey,
-    prev: Option<Cid>,
-    sig: String,
+pub struct RotateRecoveryKey {
+    pub r#type: &'static str,
+    pub key: DidKey,
+    pub prev: Option<Cid>,
+    pub sig: String,
 }

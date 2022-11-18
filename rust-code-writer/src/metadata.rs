@@ -19,7 +19,7 @@ impl fmt::Display for CrateMetadata {
             writeln!(f, "    \"{}\",", author)?;
         }
         writeln!(f, "]")?;
-        writeln!(f, "")?;
+        writeln!(f)?;
 
         Ok(())
     }

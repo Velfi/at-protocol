@@ -21,6 +21,7 @@ impl fmt::Display for Type {
     }
 }
 
+#[cfg(feature = "serde_json")]
 impl TryFrom<&Value> for Type {
     type Error = Error;
 
@@ -41,6 +42,7 @@ pub enum Default {
     Number(u64),
 }
 
+#[cfg(feature = "serde_json")]
 impl TryFrom<&Value> for Default {
     type Error = Error;
 
@@ -71,13 +73,14 @@ pub struct Parameter {
     pub maximum: Option<u64>,
 }
 
+#[cfg(feature = "serde_json")]
 impl TryFrom<&Map<String, Value>> for Parameter {
     type Error = Error;
 
     fn try_from(value: &Map<String, Value>) -> Result<Self, Self::Error> {
         let r#type = value
             .get("type")
-            .ok_or_else(|| Error::MissingField("type"))?
+            .ok_or(Error::MissingField("type"))?
             .try_into()?;
 
         let description = value

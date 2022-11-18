@@ -1,8 +1,9 @@
+use crate::dependency::CargoDependency;
+use crate::Module;
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::fmt;
 use std::path::PathBuf;
-use crate::dependency::CargoDependency;
-use crate::Module;
 
 pub struct Modules {
     modules: HashMap<String, Module>,
@@ -18,12 +19,10 @@ impl Modules {
     pub fn add_module_to_tree(&mut self, module: Module) {
         let path = module.to_module_path();
 
-        if self.modules.contains_key(&path) {
-            // TODO Maybe we should merge module deps here instead of when writing the modules?
-            return;
-        } else {
-            self.modules.insert(path, module);
+        if let Entry::Vacant(e) = self.modules.entry(path) {
+            e.insert(module);
         }
+        // TODO Maybe we should merge module deps here instead of when writing the modules?
     }
 
     pub fn module_file_paths(&self) -> Vec<PathBuf> {
@@ -33,8 +32,7 @@ impl Modules {
     fn dependencies(&self) -> Vec<CargoDependency> {
         self.modules
             .values()
-            .map(|module| module.dependencies.clone())
-            .flatten()
+            .flat_map(|module| module.dependencies.clone())
             .collect()
     }
 }

@@ -6,9 +6,9 @@ type JsonMap = Map<String, Value>;
 type JsonArray = Vec<Value>;
 
 pub struct IoSchema {
-    r#type: String,
-    required: HashSet<String>,
-    properties: HashMap<String, xrpc::Parameter>,
+    pub r#type: String,
+    pub required: HashSet<String>,
+    pub properties: HashMap<String, xrpc::Parameter>,
 }
 
 impl TryFrom<&JsonMap> for IoSchema {
@@ -67,10 +67,6 @@ pub struct Input {
 }
 
 impl Input {
-    pub fn required(&self) -> &HashSet<String> {
-        &self.schema.required
-    }
-
     pub fn properties(&self) -> &HashMap<String, xrpc::Parameter> {
         &self.schema.properties
     }
@@ -115,10 +111,6 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn required(&self) -> &HashSet<String> {
-        &self.schema.required
-    }
-
     pub fn properties(&self) -> &HashMap<String, xrpc::Parameter> {
         &self.schema.properties
     }
@@ -157,7 +149,7 @@ impl TryFrom<&JsonMap> for Output {
 }
 
 pub struct Error {
-    variants: Vec<ErrorVariant>,
+    pub variants: Vec<ErrorVariant>,
 }
 
 impl TryFrom<&JsonArray> for Error {
@@ -169,7 +161,7 @@ impl TryFrom<&JsonArray> for Error {
             .map(|v| {
                 v.as_object()
                     .ok_or_else(|| anyhow::anyhow!("invalid error variant '{}'", v))
-                    .and_then(|v| ErrorVariant::try_from(v))
+                    .and_then(ErrorVariant::try_from)
             })
             .collect::<Result<Vec<ErrorVariant>, anyhow::Error>>()?;
 
@@ -178,7 +170,7 @@ impl TryFrom<&JsonArray> for Error {
 }
 
 pub struct ErrorVariant {
-    name: String,
+    pub name: String,
 }
 
 impl TryFrom<&JsonMap> for ErrorVariant {

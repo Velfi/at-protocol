@@ -133,10 +133,6 @@ impl LexiconId {
         Ok(Self { inner })
     }
 
-    pub fn as_module_path(&self) -> String {
-        todo!()
-    }
-
     pub fn as_struct_name(&self) -> String {
         self.inner.split('.').last().unwrap().to_case(Case::Pascal)
     }
@@ -270,7 +266,7 @@ impl LexiconDoc {
     }
 }
 
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum LexiconDocError {
     #[error("The Lexicon document is missing the required field {0}")]
     MissingField(&'static str),

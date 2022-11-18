@@ -1,5 +1,5 @@
 use crate::lexicon_doc::LexiconDoc;
-use rust_code_writer::{Crate, Module, Parent};
+use rust_code_writer::{Crate, Module, Parent, Visibility};
 use std::borrow::Cow;
 use std::fmt::Write;
 use tracing::debug;
@@ -9,6 +9,7 @@ pub const INPUT_MODULE: Module = Module {
     documentation: Cow::Borrowed("XRPC inputs"),
     parent: Parent::Lib,
     dependencies: vec![],
+    visibility: Visibility::Public,
 };
 
 pub const OUTPUT_MODULE: Module = Module {
@@ -16,6 +17,7 @@ pub const OUTPUT_MODULE: Module = Module {
     documentation: Cow::Borrowed("XRPC outputs"),
     parent: Parent::Lib,
     dependencies: vec![],
+    visibility: Visibility::Public,
 };
 
 pub fn write_to_module(c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
@@ -67,12 +69,12 @@ fn write_input_struct(c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
     }
 
     // Write the end of the input struct declaration
-    writeln!(&mut writer, "}}")?;
+    writeln!(&mut writer, "}}\n")?;
 
     Ok(())
 }
 
-fn write_input_struct_builder(c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
+fn write_input_struct_builder(_c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
     debug!("writing input struct builder for {}", doc.id());
     Ok(())
 }
@@ -115,12 +117,12 @@ fn write_output_struct(c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
     }
 
     // Write the end of the output struct declaration
-    writeln!(&mut writer, "}}")?;
+    writeln!(&mut writer, "}}\n")?;
 
     Ok(())
 }
 
-fn write_output_struct_builder(c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
+fn write_output_struct_builder(_c: &mut Crate, doc: &LexiconDoc) -> anyhow::Result<()> {
     debug!("writing output struct builder for {}", doc.id());
     Ok(())
 }

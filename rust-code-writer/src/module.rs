@@ -1,6 +1,23 @@
+use crate::dependency::CargoDependency;
+use std::fmt;
 use std::{borrow::Cow, path::PathBuf};
 
-use crate::dependency::CargoDependency;
+#[derive(Clone)]
+pub enum Visibility {
+    Public,
+    Private,
+    PubCrate,
+}
+
+impl fmt::Display for Visibility {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Visibility::Public => write!(f, "pub "),
+            Visibility::Private => write!(f, ""),
+            Visibility::PubCrate => write!(f, "pub(crate) "),
+        }
+    }
+}
 
 #[derive(Clone)]
 pub struct Module {
@@ -8,6 +25,7 @@ pub struct Module {
     pub documentation: Cow<'static, str>,
     pub parent: Parent,
     pub dependencies: Vec<CargoDependency>,
+    pub visibility: Visibility,
 }
 
 impl Module {
@@ -15,10 +33,9 @@ impl Module {
         if matches!(self.parent, Parent::Lib) {
             format!("crate::{}", self.name)
         } else {
-            let mut path_back_to_lib = self.to_path();
             let mut path = String::new();
             path.push_str("crate");
-            while let Some(part) = path_back_to_lib.next() {
+            for part in self.to_path() {
                 path.push_str("::");
                 path.push_str(part);
             }
@@ -28,9 +45,8 @@ impl Module {
     }
 
     pub fn to_file_path(&self) -> PathBuf {
-        let mut path_back_to_lib = self.to_path();
         let mut path = PathBuf::new();
-        while let Some(part) = path_back_to_lib.next() {
+        for part in self.to_path() {
             path.push(part.as_ref());
         }
         path.set_extension("rs");
@@ -75,9 +91,8 @@ pub enum Parent {
 
 #[cfg(test)]
 mod tests {
+    use super::{Module, Parent, Visibility};
     use std::path::PathBuf;
-
-    use super::{Module, Parent};
 
     fn create_test_module() -> Module {
         let top_level_module = Module {
@@ -85,6 +100,7 @@ mod tests {
             documentation: "The top module".into(),
             parent: Parent::Lib,
             dependencies: Vec::new(),
+            visibility: Visibility::Public,
         };
 
         let middle_level_module = Module {
@@ -92,6 +108,7 @@ mod tests {
             documentation: "The middle module".into(),
             parent: Parent::Module(Box::new(top_level_module.clone())),
             dependencies: Vec::new(),
+            visibility: Visibility::Public,
         };
 
         Module {
@@ -99,6 +116,7 @@ mod tests {
             documentation: "The bottom module".into(),
             parent: Parent::Module(Box::new(middle_level_module)),
             dependencies: Vec::new(),
+            visibility: Visibility::Public,
         }
     }
 

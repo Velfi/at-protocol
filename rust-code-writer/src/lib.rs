@@ -4,7 +4,7 @@ mod module;
 mod tree;
 
 pub use metadata::CrateMetadata;
-pub use module::{Module, Parent};
+pub use module::{Module, Parent, Visibility};
 use std::{
     collections::HashSet,
     fmt::{Display, Write},
@@ -40,9 +40,7 @@ impl Crate {
 
     pub fn writer(&mut self, module: Module) -> impl Write + '_ {
         self.add_module_to_tree(module.clone());
-        let writer = self.get_or_create_writer(module);
-
-        writer
+        self.get_or_create_writer(module)
     }
 
     fn get_or_create_writer(&mut self, module: Module) -> impl Write + '_ {
@@ -71,7 +69,7 @@ impl Crate {
     fn merge_pending_writes(&mut self) {
         self.pending_writes
             .sort_by(|a, b| a.0.to_module_path().cmp(&b.0.to_module_path()));
-        let unmerged_writes = std::mem::replace(&mut self.pending_writes, Vec::new());
+        let unmerged_writes = std::mem::take(&mut self.pending_writes);
 
         self.pending_writes =
             unmerged_writes
@@ -100,10 +98,10 @@ impl Crate {
         let mut cargo_toml = std::fs::File::create(cargo_toml_path)?;
 
         writeln!(cargo_toml, "{}", self.metadata)?;
-        writeln!(cargo_toml, "")?;
+        writeln!(cargo_toml)?;
 
         writeln!(cargo_toml, "{}", self.modules)?;
-        writeln!(cargo_toml, "")?;
+        writeln!(cargo_toml)?;
 
         Ok(())
     }

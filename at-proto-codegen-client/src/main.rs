@@ -98,7 +98,7 @@ fn generate_client_from_lexicon(args: Args) -> anyhow::Result<()> {
             bail!("given output dir exists but is a file. please choose another output dir and rerun the command")
         }
     } else {
-        std::fs::create_dir_all(&output_dir).context("couldn't create output dir")?;
+        std::fs::create_dir_all(output_dir).context("couldn't create output dir")?;
     }
 
     debug!("generated code output dir {output_dir:?}");
