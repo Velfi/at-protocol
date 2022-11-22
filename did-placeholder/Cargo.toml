@@ -9,7 +9,10 @@ authors = ["Zelda Hessler <zelda.hessler@pm.me>"]
 
 [dependencies]
 axum = "0.5.17"
+hex = "0.4.3"
 serde = "1.0.147"
+sha2 = "0.10.6"
+thiserror = "1.0.37"
 tokio = { version = "1.21.2", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"

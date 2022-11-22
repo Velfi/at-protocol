@@ -1,11 +1,9 @@
 pub mod io;
 
-use std::fmt::{Display, Formatter};
-
-use convert_case::{Case, Casing};
 use serde_json::Value;
 use thiserror::Error;
 use tracing::{debug, error, warn};
+use xrpc::Nsid;
 
 pub enum LexiconDocType {
     Query,
@@ -103,8 +101,10 @@ impl Builder {
             .ok_or(LexiconDocError::MissingField("lexicon"))?;
         let id = self
             .id
-            .ok_or(LexiconDocError::MissingField("id"))?
-            .try_into()?;
+            .ok_or(LexiconDocError::MissingField("id"))?;
+        let id = id
+            .parse::<Nsid>()
+            .map_err(|_| LexiconDocError::InvalidField { field: "id", value: id })?;
         let r#type = self.r#type.ok_or(LexiconDocError::MissingField("type"))?;
 
         Ok(LexiconDoc {
@@ -120,42 +120,10 @@ impl Builder {
     }
 }
 
-pub struct LexiconId {
-    inner: String,
-}
-
-impl LexiconId {
-    pub fn new(inner: String) -> Result<Self, LexiconDocError> {
-        if inner.is_empty() {
-            return Err(LexiconDocError::InvalidLexiconId(inner));
-        }
-
-        Ok(Self { inner })
-    }
-
-    pub fn as_struct_name(&self) -> String {
-        self.inner.split('.').last().unwrap().to_case(Case::Pascal)
-    }
-}
-
-impl TryFrom<String> for LexiconId {
-    type Error = LexiconDocError;
-
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        Self::new(value)
-    }
-}
-
-impl Display for LexiconId {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.inner)
-    }
-}
-
 #[allow(dead_code)]
 pub struct LexiconDoc {
     lexicon: LexiconVersion,
-    id: LexiconId,
+    id: Nsid,
     r#type: LexiconDocType,
     revision: Option<u64>,
     description: Option<String>,
@@ -170,7 +138,7 @@ impl LexiconDoc {
         &self.lexicon
     }
 
-    pub fn id(&self) -> &LexiconId {
+    pub fn id(&self) -> &Nsid {
         &self.id
     }
 
@@ -270,6 +238,9 @@ impl LexiconDoc {
 pub enum LexiconDocError {
     #[error("The Lexicon document is missing the required field {0}")]
     MissingField(&'static str),
-    #[error("The Lexicon document has an invalid lexicon id: {0}")]
-    InvalidLexiconId(String),
+    #[error("The Lexicon document has an invalid {field} field with value {value}")]
+    InvalidField {
+        field: &'static str,
+        value: String,
+    },
 }

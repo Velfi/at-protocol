@@ -1,5 +1,7 @@
-use serde_json::{Map, Value};
 use std::fmt;
+
+#[cfg(feature = "serde_json")]
+use serde_json::{Map, Value};
 
 pub enum Type {
     String,
