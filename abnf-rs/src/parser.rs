@@ -448,6 +448,15 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_the_abnf_abnf() {
+        init_logger();
+        let input = include_str!("../abnf.abnf");
+        let (remaining, s) = rule_list(input).unwrap();
+        assert_eq!(remaining, "");
+        assert_eq!(input, s);
+    }
+
+    #[test]
     fn test_rule_parsing() {
         init_logger();
 
