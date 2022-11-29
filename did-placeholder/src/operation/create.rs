@@ -1,7 +1,6 @@
-use sha2::{Sha256, Digest};
-use std::fmt;
+use super::{Operation, ToBytes};
 use crate::cid::Cid;
-use super::Operation;
+use std::fmt;
 
 const OP_CREATE: &str = "create";
 
@@ -16,20 +15,16 @@ pub struct Create {
 }
 
 impl Create {
-    pub fn builder() -> CreateBuilder {
-        CreateBuilder::default()
+    pub fn cid(&self) -> Cid {
+        self.clone().into()
     }
 
-    fn to_bytes(self) -> Vec<u8> {
-        let mut bytes = Vec::new();
-        bytes.extend_from_slice(self.signing_key.as_bytes());
-        bytes.extend_from_slice(self.recovery_key.as_bytes());
-        bytes.extend_from_slice(self.username.as_bytes());
-        bytes.extend_from_slice(self.service.as_bytes());
-        if let Some(prev) = self.prev {
-            bytes.extend_from_slice(prev.as_bytes());
-        }
-        bytes
+    pub fn prev(&self) -> Option<Cid> {
+        self.prev.clone()
+    }
+
+    pub fn builder() -> CreateBuilder {
+        CreateBuilder::default()
     }
 }
 
@@ -75,8 +70,12 @@ impl CreateBuilder {
     }
 
     pub fn build(self) -> Result<Create, Error> {
-        let signing_key = self.signing_key.ok_or(Error::missing_field("signing_key"))?;
-        let recovery_key = self.recovery_key.ok_or(Error::missing_field("recovery_key"))?;
+        let signing_key = self
+            .signing_key
+            .ok_or(Error::missing_field("signing_key"))?;
+        let recovery_key = self
+            .recovery_key
+            .ok_or(Error::missing_field("recovery_key"))?;
         let username = self.username.ok_or(Error::missing_field("username"))?;
         let service = self.service.ok_or(Error::missing_field("service"))?;
         let prev = self.prev;
@@ -116,6 +115,22 @@ impl fmt::Display for ErrorRepr {
     }
 }
 
+impl ToBytes for Create {
+    fn to_bytes(self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(self.signing_key.as_bytes());
+        bytes.extend_from_slice(self.recovery_key.as_bytes());
+        bytes.extend_from_slice(self.username.as_bytes());
+        bytes.extend_from_slice(self.service.as_bytes());
+        if let Some(prev) = self.prev {
+            bytes.extend_from_slice(prev.as_bytes());
+        }
+        bytes.extend_from_slice(self.sig.as_bytes());
+
+        bytes
+    }
+}
+
 impl Operation for Create {
     fn r#type(&self) -> String {
         OP_CREATE.to_owned()
@@ -128,13 +143,44 @@ impl Operation for Create {
     fn sig(&self) -> String {
         self.sig.clone()
     }
-
-    fn hash(self) -> String {
-        let mut hasher = Sha256::new(); 
-        let bytes = self.to_bytes();
-        hasher.update(bytes);
-        let res = hasher.finalize();
-
-        hex::encode(res)
-    }
 }
+
+// impl DidKey {
+//     /// Create a new DID key from a [Create] operation as per [the standard](https://atproto.com/specs/did-plc#how-it-works)
+//     pub fn new(create_operation: Create) -> Self {
+//         let cid = create_operation.cid();
+//         let mut encoded_cid = base32::encode(Alphabet::RFC4648 { padding: true }, cid.as_bytes());
+//         encoded_cid.truncate(24);
+
+//         DidKey { key: format!("did:plc:{encoded_cid}") }
+//     }
+
+//     pub fn as_str(&self) -> &str {
+//         self.key.as_str()
+//     }
+
+//     pub fn to_bytes(&self) -> Vec<u8> {
+//         hex::decode(self.key).expect("key will always be valid hex")
+//     }
+// }
+
+// #[cfg(test)]
+// mod tests {
+//     use crate::operation::Create;
+
+//     use super::DidKey;
+
+//     #[test]
+//     fn snapshot_test() {
+//         let create_op = Create::builder()
+//             .
+//             .build()
+//             .expect("is a valid create operation");
+
+//         let did_key = DidKey::new(create_op);
+//         let expected = "";
+//         let actual = did_key.as_str();
+
+//         assert_eq!(expected, actual);
+//     }
+// }

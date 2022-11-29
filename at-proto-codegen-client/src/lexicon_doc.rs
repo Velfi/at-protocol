@@ -99,12 +99,13 @@ impl Builder {
         let lexicon = self
             .lexicon
             .ok_or(LexiconDocError::MissingField("lexicon"))?;
-        let id = self
-            .id
-            .ok_or(LexiconDocError::MissingField("id"))?;
+        let id = self.id.ok_or(LexiconDocError::MissingField("id"))?;
         let id = id
             .parse::<Nsid>()
-            .map_err(|_| LexiconDocError::InvalidField { field: "id", value: id })?;
+            .map_err(|_| LexiconDocError::InvalidField {
+                field: "id",
+                value: id,
+            })?;
         let r#type = self.r#type.ok_or(LexiconDocError::MissingField("type"))?;
 
         Ok(LexiconDoc {
@@ -239,8 +240,5 @@ pub enum LexiconDocError {
     #[error("The Lexicon document is missing the required field {0}")]
     MissingField(&'static str),
     #[error("The Lexicon document has an invalid {field} field with value {value}")]
-    InvalidField {
-        field: &'static str,
-        value: String,
-    },
+    InvalidField { field: &'static str, value: String },
 }

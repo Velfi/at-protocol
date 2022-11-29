@@ -4,7 +4,7 @@ pub enum Type {
 }
 
 pub struct XrpcRequest {
-    r#type: Type,
+    _type: Type,
 }
 
 impl XrpcRequest {
@@ -32,7 +32,7 @@ impl Builder {
     pub fn build(self) -> Result<XrpcRequest, Error> {
         let r#type = self.r#type.ok_or(Error::MissingField("type"))?;
 
-        Ok(XrpcRequest { r#type })
+        Ok(XrpcRequest { _type: r#type })
     }
 }
 

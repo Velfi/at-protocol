@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+  "abnf-rs",
   "at-proto-codegen-client",
   "did-placeholder",
   "rust-code-writer",

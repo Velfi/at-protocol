@@ -1,10 +1,10 @@
+pub mod nsid;
 pub mod parameter;
 pub mod request;
 pub mod response;
-pub mod nsid;
 
-pub use parameter::Parameter;
 pub use nsid::Nsid;
+pub use parameter::Parameter;
 
 pub enum XrpcBodyEncoding {
     String(String),

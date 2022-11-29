@@ -4,7 +4,9 @@ use regex::Regex;
 use std::{fmt, str::FromStr};
 
 // I wrote tests for this regex and I'm still not confident it's correct. 😅
-static NSID_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^([[[:alnum:]]\-]+)\.([[[:alnum:]]\-]+)\.([[[:alnum:]]\-]+\.?)+$").unwrap());
+static NSID_REGEX: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"^([[[:alnum:]]\-]+)\.([[[:alnum:]]\-]+)\.([[[:alnum:]]\-]+\.?)+$").unwrap()
+});
 
 /// https://atproto.com/specs/nsid
 ///
@@ -87,7 +89,7 @@ pub struct Error(#[from] ErrorRepr);
 
 impl Error {
     // Accessors for anything we do want to expose publicly.
-    fn invalid() -> Self {
+    pub fn invalid() -> Self {
         Self(ErrorRepr::Invalid)
     }
 }

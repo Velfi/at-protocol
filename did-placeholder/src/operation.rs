@@ -12,18 +12,19 @@ pub use update_username::UpdateUsername;
 
 use crate::cid::Cid;
 
-pub trait Operation {
+pub trait Operation: ToBytes {
     /// operation type
     fn r#type(&self) -> String;
     /// pointer to the CID of the previous operation in the log
     fn prev(&self) -> Option<Cid>;
     /// base64url encoded signature of the operation
     fn sig(&self) -> String;
-    /// get the sha256 hash of the operation, base32 encoded and truncated to 24 characters
-    /// as per https://atproto.com/specs/did-plc#how-it-works
-    fn hash(self) -> String;
 }
 
 pub struct OperationLog {
     pub log: Vec<Box<dyn Operation>>,
+}
+
+pub trait ToBytes {
+    fn to_bytes(self) -> Vec<u8>;
 }
